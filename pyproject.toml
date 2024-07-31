@@ -13,6 +13,8 @@ pydantic = "^2.8.2"
 pydantic-settings = "^2.3.4"
 sqlalchemy = "^2.0.31"
 aiosqlite = "^0.20.0"
+fastapi-users = {extras = ["sqlalchemy"], version = "^13.0.0"}
+isort = "^5.13.2"
 
 
 [build-system]

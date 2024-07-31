@@ -1,7 +1,9 @@
-from .base import CRUDBase
-from app.models.ad import Ad
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.models.ad import Ad
+
+from .base import CRUDBase
 
 
 class Ad_CRUD(CRUDBase):

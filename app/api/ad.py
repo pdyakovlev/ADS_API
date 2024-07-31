@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Depends
-
-from app.crud.ad import ad_crud
-
-from app.schemas.ad import AdCreate, AdRead
-from app.core.db import get_async_session
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.core.db import get_async_session
+from app.core.user import current_superuser, current_user
+from app.crud.ad import ad_crud
+from app.schemas.ad import AdCreate, AdRead
 
 router = APIRouter(prefix='/ad',
                    tags=['Ads'])
@@ -14,8 +14,9 @@ router = APIRouter(prefix='/ad',
     '/',
     response_model=list[AdRead],
     response_model_exclude_none=True,
+    dependencies=[Depends(current_user)]
 )
-async def get_all_ads(
+async def get_ads(
         session: AsyncSession = Depends(get_async_session)
 ):
     ad = await ad_crud.get_multi(session)
@@ -26,10 +27,11 @@ async def get_all_ads(
     '/{ad_id}/',
     response_model=AdRead,
     response_model_exclude_none=True,
+    dependencies=[Depends(current_user)]
 )
 async def get_ad(
         ad_id: int,
-        session: AsyncSession = Depends(get_async_session)
+        session: AsyncSession = Depends(get_async_session),
 ):
     ad = await ad_crud.get(ad_id, session)
     if ad is None:
@@ -40,7 +42,8 @@ async def get_ad(
 @router.post(
     '/',
     response_model=AdCreate,
-    response_model_exclude_none=True
+    response_model_exclude_none=True,
+    dependencies=[Depends(current_superuser)]
 )
 async def create_ad(
         ad: AdCreate,
@@ -52,7 +55,8 @@ async def create_ad(
 
 @router.patch('/{ad_id}/',
               response_model=AdRead,
-              response_model_exclude_none=True,)
+              response_model_exclude_none=True,
+              dependencies=[Depends(current_superuser)])
 async def partialy_update_ad(
         ad_id: int,
         cat_in: AdRead,
@@ -64,7 +68,8 @@ async def partialy_update_ad(
 
 @router.delete('/{ad_id}/',
                response_model=AdRead,
-               response_model_exclude_none=True,)
+               response_model_exclude_none=True,
+               dependencies=[Depends(current_superuser)])
 async def remove_ad(ad_id: int,
                     session: AsyncSession = Depends(get_async_session)):
     ad = await ad_crud.get_by_attribute('id', ad_id, session)

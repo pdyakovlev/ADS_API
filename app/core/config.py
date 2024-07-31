@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     app_title: str = 'Тестовое задание'
     desc: str = 'Описание'
     database_url: str = 'Здесь должна быть строка подключения бд'
+    secret: str = 'SECRET'
 
     class Config:
         env_file = '.env'
